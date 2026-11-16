@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Para Dani, mi Amor</title>
+<meta name="theme-color" content="#e8799a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Dani">
+<link rel="manifest" href="manifest.json">
+<style>
+  :root { --rose:#e8799a; --rose-dark:#b84f72; --cream:#fff8f3; --ink:#4a2a36; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family: Georgia, 'Times New Roman', serif; color:var(--ink);
+    background: linear-gradient(160deg, #fff1f5 0%, var(--cream) 60%, #fde7ef 100%); overflow-x:hidden; }
+  .capitulos { height:100dvh; overflow-y:auto; scroll-snap-type:y mandatory; }
+  section { min-height:100dvh; scroll-snap-align:start; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; padding:64px 22px 96px; text-align:center; }
+  h1 { font-size:clamp(2rem,9vw,3.6rem); color:var(--rose-dark); font-weight:normal; line-height:1.15; }
+  h2 { font-size:clamp(1.5rem,6vw,2.3rem); color:var(--rose-dark); font-weight:normal; margin-bottom:14px; }
+  p { font-size:1.05rem; line-height:1.75; max-width:560px; margin:10px auto; }
+  .kicker { font-family:'Trebuchet MS', sans-serif; font-size:.75rem; letter-spacing:.25em; text-transform:uppercase; color:var(--rose); margin-bottom:10px; }
+  .barra { position:fixed; bottom:14px; left:50%; transform:translateX(-50%); z-index:10;
+    background:rgba(255,255,255,.92); border-radius:999px; padding:8px 14px; display:flex; align-items:center; gap:10px; box-shadow:0 6px 24px rgba(184,79,114,.2); }
+  .barra button { border:none; background:var(--rose); color:#fff; width:34px; height:34px; border-radius:50%; font-size:1rem; cursor:pointer; }
+  .puntos { display:flex; gap:6px; }
+  .puntos span { width:8px; height:8px; border-radius:50%; background:#f3c3d2; cursor:pointer; transition:background .3s, transform .3s; }
+  .puntos span.activo { background:var(--rose-dark); transform:scale(1.35); }
+  .sobre { width:min(300px,80vw); height:190px; position:relative; margin:26px auto; cursor:pointer; }
+  .sobre-cuerpo { position:absolute; inset:0; background:linear-gradient(135deg,#fff,#fde3ec); border-radius:14px; box-shadow:0 14px 34px rgba(184,79,114,.25); }
+  .sobre-tapa { position:absolute; top:0; left:0; right:0; height:50%; background:var(--rose); clip-path:polygon(0 0,100% 0,50% 100%); border-radius:14px 14px 0 0; transform-origin:top center; transition:transform .8s ease; z-index:2; }
+  .sobre.abierto .sobre-tapa { transform:rotateX(180deg); }
+  .sobre-corazon { position:absolute; left:50%; top:45%; transform:translate(-50%,-50%); font-size:2.2rem; color:var(--rose-dark); z-index:3; animation:latido 1.6s ease-in-out infinite; }
+  @keyframes latido { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-50%,-50%) scale(1.15)} }
+  .fotos { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-top:18px; }
+  .polaroid { background:#fff; padding:10px 10px 12px; border-radius:6px; width:150px; box-shadow:0 10px 24px rgba(184,79,114,.2); transform:rotate(var(--giro,0deg)); transition:transform .3s; }
+  .polaroid:hover { transform:rotate(0deg) scale(1.05); }
+  .polaroid img { width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:3px; display:block; }
+  .foto-grande { width:min(260px,70vw); border-radius:20px; box-shadow:0 12px 30px rgba(184,79,114,.25); margin-top:18px; }
+  .dos { display:grid; grid-template-columns:1fr; gap:14px; width:100%; max-width:420px; margin-top:16px; }
+  .linea { width:100%; max-width:560px; margin-top:14px; text-align:left; }
+  .momento { background:#fff; border-radius:16px; padding:14px 18px; margin-bottom:12px; box-shadow:0 6px 16px rgba(184,79,114,.12); border-left:4px solid var(--rose); }
+  .momento b { color:var(--rose-dark); font-weight:normal; font-family:'Trebuchet MS', sans-serif; font-size:.85rem; letter-spacing:.05em; }
+  .momento p { margin:4px 0 0; text-align:left; font-size:.98rem; }
+  .razones { display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; max-width:560px; margin-top:16px; }
+  .tarjeta { height:130px; perspective:800px; cursor:pointer; }
+  .tarjeta-in { position:relative; width:100%; height:100%; transition:transform .6s; transform-style:preserve-3d; }
+  .tarjeta.girada .tarjeta-in { transform:rotateY(180deg); }
+  .cara { position:absolute; inset:0; backface-visibility:hidden; border-radius:18px; display:flex; align-items:center; justify-content:center; padding:12px; font-size:.95rem; }
+  .frente { background:linear-gradient(135deg,var(--rose),var(--rose-dark)); color:#fff; font-size:1.5rem; }
+  .atras { background:#fff; transform:rotateY(180deg); box-shadow:0 8px 20px rgba(184,79,114,.18); }
+  .carta { background:#fff; border-radius:20px; padding:26px 22px; max-width:580px; text-align:left; box-shadow:0 14px 40px rgba(184,79,114,.15); margin-top:14px; }
+  .carta p { text-align:left; margin:12px 0; font-size:1rem; }
+  .palabras { margin-top:14px; display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+  .palabras span { background:#fff; border-radius:999px; padding:8px 14px; font-family:'Trebuchet MS', sans-serif; font-size:.9rem; color:var(--rose-dark); box-shadow:0 4px 12px rgba(184,79,114,.15); }
+  .btn { margin-top:22px; font-family:'Trebuchet MS', sans-serif; font-size:1rem; color:#fff; background:linear-gradient(135deg,var(--rose),var(--rose-dark)); border:none; border-radius:999px; padding:15px 30px; cursor:pointer; box-shadow:0 10px 26px rgba(184,79,114,.35); }
+  .revela { opacity:0; transform:translateY(26px); transition:opacity .8s ease, transform .8s ease; }
+  .revela.visible { opacity:1; transform:none; }
+  canvas#confeti { position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:20; }
+</style>
+</head>
+<body>
+<div class="capitulos" id="capitulos">
+
+<section id="sobre">
+  <p class="kicker revela">Para</p>
+  <h1 class="revela">Dani</h1>
+  <div class="sobre revela" id="sobreBtn" onclick="abrirSobre()">
+    <div class="sobre-cuerpo"></div>
+    <div class="sobre-tapa"></div>
+    <div class="sobre-corazon">♡</div>
+  </div>
+  <p class="revela" style="font-size:.9rem;opacity:.75">Toca el sobre para abrirlo</p>
+</section>
+
+<section id="pequena">
+  <h2 class="revela">Cuando eras chiquita</h2>
+  <p class="revela"><b>Bebé:</b> No estuve ahí para verte de bebé, pero mírate: ya desde chiquita eras la consentida de todos. Si te hubiera conocido así, igual me habría enamorado.</p>
+  <p class="revela"><b>Niña:</b> De niña ya eras alegre y juiciosa, y la verdad te consintieron demasiado. Mirando estas fotos pienso en la niña que se volvió la mujer que hoy me tiene loco.</p>
+  <div class="fotos revela">
+    <div class="polaroid" style="--giro:-4deg"><img src="foto-raton.png" alt="Dani de bebé con disfraz de ratoncita"></div>
+    <div class="polaroid" style="--giro:3deg"><img src="foto-bruja.png" alt="Dani disfrazada de bruja"></div>
+    <div class="polaroid" style="--giro:-2deg"><img src="foto-caperucita.png" alt="Dani disfrazada de princesa con capa roja"></div>
+  </div>
+</section>
+
+<section id="camino">
+  <h2 class="revela">Lo que admiro de ti</h2>
+  <p class="revela">Eres hermosa, astuta y noble. Tu piel es suave, y tus ojos azules tienen un girasol que solo se ve si te miro de cerca. Cuando lo hago, se me olvida todo lo demás. Tienes tu genio, sí, pero eso también eres tú. Y quieres a tu hermanito como a un angelito.</p>
+  <img class="foto-grande revela" src="foto-fiesta.png" alt="Dani con vestido de fiesta">
+</section>
+
+<section id="historia">
+  <h2 class="revela">Nosotros</h2>
+  <p class="revela">Desde que te encontré, han sido algunos de los mejores años de mi vida.</p>
+  <div class="linea">
+    <div class="momento revela"><b>LOS INICIOS</b><p>Viajes, sonrisas y aprendizajes.</p></div>
+    <div class="momento revela"><b>LAS BAJAS</b><p>No todo ha sido perfecto, pero siempre hemos encontrado la manera de volver a elegirnos.</p></div>
+    <div class="momento revela"><b>SIEMPRE VOLVEMOS</b><p>Aunque nos hayamos alejado, la vida nos vuelve a juntar y terminamos en el mismo lugar: uno junto al otro.</p></div>
+  </div>
+  <div class="fotos revela">
+    <div class="polaroid" style="--giro:-3deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.45%20(4).jpeg" alt="Recuerdo"></div>
+    <div class="polaroid" style="--giro:2deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.45%20(5).jpeg" alt="Recuerdo"></div>
+    <div class="polaroid" style="--giro:-2deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.42%20(1).jpeg" alt="Recuerdo"></div>
+    <div class="polaroid" style="--giro:3deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.42.jpeg" alt="Recuerdo"></div>
+    <div class="polaroid" style="--giro:-3deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.43%20(1).jpeg" alt="Recuerdo"></div>
+    <div class="polaroid" style="--giro:2deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.43.jpeg" alt="Recuerdo"></div>
+    <div class="polaroid" style="--giro:-2deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.44%20(1).jpeg" alt="Recuerdo"></div>
+    <div class="polaroid" style="--giro:3deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.44%20(2).jpeg" alt="Recuerdo"></div>
+  </div>
+</section>
+
+<section id="quiero">
+  <h2 class="revela">Lo que soñamos</h2>
+  <p class="revela">Te amo y quiero estar cada día a tu lado. Eres la mujer con la que quiero construir mi familia, compartir mis sueños y vivir todo lo que todavía nos falta por experimentar.</p>
+  <p class="revela">Cada mañana me levanto pensando en que vamos a estar bien. Tú eres una de mis mayores motivaciones.</p>
+  <div class="fotos revela">
+    <div class="polaroid" style="--giro:2deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.44.jpeg" alt="Recuerdo"></div>
+    <div class="polaroid" style="--giro:-2deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.45%20(1).jpeg" alt="Recuerdo"></div>
+    <div class="polaroid" style="--giro:3deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.46%20(2).jpeg" alt="Recuerdo"></div>
+  </div>
+  <img class="foto-grande revela" src="sueno-familia.png" alt="Lo que soñamos">
+</section>
+
+<section id="promesa">
+  <h2 class="revela">Lo que te prometo</h2>
+  <p class="revela">Quiero que nunca dudes de que aquí me tienes. Voy a estar para ti, para acompañarte, apoyarte, escucharte y darte la mano en todo lo que necesites.</p>
+  <p class="revela">Quiero cuidarte, respetarte, amarte y demostrarte cada día que puedes contar conmigo.</p>
+  <div class="fotos revela">
+    <div class="polaroid" style="--giro:-3deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.45%20(2).jpeg" alt="Recuerdo"></div>
+    <div class="polaroid" style="--giro:2deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.46%20(3).jpeg" alt="Recuerdo"></div>
+  </div>
+</section>
+
+<section id="razones">
+  <h2 class="revela">Por qué te amo</h2>
+  <p class="revela" style="font-size:.9rem">Toca cada tarjeta</p>
+  <div class="razones revela">
+    <div class="tarjeta" onclick="this.classList.toggle('girada')"><div class="tarjeta-in"><div class="cara frente">♡</div><div class="cara atras">Tu corazón enorme</div></div></div>
+    <div class="tarjeta" onclick="this.classList.toggle('girada')"><div class="tarjeta-in"><div class="cara frente">✿</div><div class="cara atras">Tus valores y principios</div></div></div>
+    <div class="tarjeta" onclick="this.classList.toggle('girada')"><div class="tarjeta-in"><div class="cara frente">★</div><div class="cara atras">Tus sueños y tus ganas</div></div></div>
+    <div class="tarjeta" onclick="this.classList.toggle('girada')"><div class="tarjeta-in"><div class="cara frente">☾</div><div class="cara atras">Tus ojos preciosos</div></div></div>
+  </div>
+  <div class="fotos revela">
+    <div class="polaroid" style="--giro:-2deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.45%20(3).jpeg" alt="Recuerdo"></div>
+    <div class="polaroid" style="--giro:3deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.45%20(4).jpeg" alt="Recuerdo"></div>
+  </div>
+</section>
+
+<section id="palabras">
+  <p class="kicker revela">Nuestras palabras</p>
+  <div class="palabras revela">
+    <span>"Oye, amor"</span>
+    <span>"Mi amor, mi vida"</span>
+    <span>"Mi rata podría"</span>
+    <span>"Ish po"</span>
+    <span>"Mi burrito con capul"</span>
+    <span>"Mi burrito triste"</span>
+  </div>
+  <div class="fotos revela">
+    <div class="polaroid" style="--giro:-2deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.45%20(5).jpeg" alt="Recuerdo"></div>
+  </div>
+</section>
+
+<section id="final">
+  <h2 class="revela">Para ti, hoy</h2>
+  <div class="carta revela">
+    <p>Feliz cumpleaños, mujer hermosa y especial. Gracias por existir, por llegar a mi vida y por regalarme tantos años de felicidad.</p>
+    <p>Te amo, especialmente por esos ojos preciosos que me siguen enamorando como el primer día.</p>
+    <p>Eres la niña más hermosa del mundo, y yo soy tu borrito con capul, el que te ama con toda su vida.</p>
+  </div>
+  <div class="fotos revela">
+    <div class="polaroid" style="--giro:3deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.46%20(1).jpeg" alt="Recuerdo"></div>
+    <div class="polaroid" style="--giro:-3deg"><img src="WhatsApp%20Image%202026-11-16%20at%208.59.46%20.jpeg" alt="Recuerdo"></div>
+  </div>
+  <button class="btn" onclick="lanzarConfeti()">Toca para celebrar</button>
+</section>
+
+</div>
+
+<div class="barra">
+  <button onclick="mover(-1)" aria-label="Anterior">↑</button>
+  <div class="puntos" id="puntos"></div>
+  <button onclick="mover(1)" aria-label="Siguiente">↓</button>
+</div>
+
+<canvas id="confeti"></canvas>
+
+<script>
+const contenedor = document.getElementById('capitulos');
+const secciones = Array.from(document.querySelectorAll('section'));
+const puntos = document.getElementById('puntos');
+
+secciones.forEach((s, i) => {
+  const p = document.createElement('span');
+  p.onclick = () => irA(i);
+  puntos.appendChild(p);
+});
+
+function irA(i) {
+  i = Math.max(0, Math.min(secciones.length - 1, i));
+  secciones[i].scrollIntoView({ behavior: 'smooth' });
+}
+function indiceActual() {
+  let idx = 0;
+  secciones.forEach((s, i) => { if (contenedor.scrollTop >= s.offsetTop - contenedor.offsetTop - 40) idx = i; });
+  return idx;
+}
+function mover(d) { irA(indiceActual() + d); }
+contenedor.addEventListener('scroll', () => {
+  const idx = indiceActual();
+  Array.from(puntos.children).forEach((p, i) => p.classList.toggle('activo', i === idx));
+});
+
+const observador = new IntersectionObserver(entradas => {
+  entradas.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { root: contenedor, threshold: 0.2 });
+document.querySelectorAll('.revela').forEach(el => observador.observe(el));
+
+function abrirSobre() {
+  document.getElementById('sobreBtn').classList.add('abierto');
+  setTimeout(() => irA(1), 900);
+}
+
+function lanzarConfeti() {
+  const c = document.getElementById('confeti');
+  const ctx = c.getContext('2d');
+  c.width = innerWidth; c.height = innerHeight;
+  const colores = ['#e8799a','#f9c6d6','#b84f72','#fff','#ffd1dc'];
+  const piezas = Array.from({length:140}, () => ({
+    x: Math.random()*c.width, y: -20 - Math.random()*c.height*.3,
+    v: 2 + Math.random()*4, r: 4 + Math.random()*6,
+    c: colores[Math.floor(Math.random()*colores.length)], a: Math.random()*6
+  }));
+  let t = 0;
+  (function frame() {
+    ctx.clearRect(0,0,c.width,c.height);
+    piezas.forEach(p => {
+      p.y += p.v; p.a += .05; p.x += Math.sin(p.a);
+      ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x, p.y, p.r/2, 0, Math.PI*2); ctx.fill();
+    });
+    if (++t < 240) requestAnimationFrame(frame); else ctx.clearRect(0,0,c.width,c.height);
+  })();
+}
+</script>
+</body>
+</html>
